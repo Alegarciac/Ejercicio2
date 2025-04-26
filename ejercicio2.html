@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro de Citas - Clínica Odontológica</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e9f2fb;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      margin: 50px auto;
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #0d47a1;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #1565c0;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #90caf9;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: #1565c0;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .success-message {
+      text-align: center;
+      color: green;
+      margin-top: 15px;
+    }
+
+    .error-message {
+      text-align: center;
+      color: red;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Registro de Citas</h2>
+    <form id="citaForm">
+      <label for="nombre">Nombre Completo</label>
+      <input type="text" id="nombre" required>
+
+      <label for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" required>
+
+      <label for="telefono">Teléfono</label>
+      <input type="tel" id="telefono" required>
+
+      <label for="fecha">Fecha de Cita</label>
+      <input type="date" id="fecha" required>
+
+      <label for="motivo">Motivo de la Cita</label>
+      <textarea id="motivo" rows="3" required></textarea>
+
+      <button type="submit">Registrar Cita</button>
+      <div class="success-message" id="mensajeExito"></div>
+      <div class="error-message" id="mensajeError"></div>
+    </form>
+  </div>
+
+  <!-- Firebase App (SDK) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+  <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyAMEAFEN0OMQCypqmToFsclpk74TPr0jtk",
+      authDomain: "alejandra-g.firebaseapp.com",
+      projectId: "alejandra-g",
+      storageBucket: "alejandra-g.firebasestorage.app",
+      messagingSenderId: "827997032883",
+      appId: "1:827997032883:web:aa8ed17df8a70cc62cfbc6"
+    };
+
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Capturar el formulario
+    document.getElementById('citaForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Obtener valores
+      const nombre = document.getElementById('nombre').value;
+      const correo = document.getElementById('correo').value;
+      const telefono = document.getElementById('telefono').value;
+      const fecha = document.getElementById('fecha').value;
+      const motivo = document.getElementById('motivo').value;
+
+      // Guardar en Firestore
+      db.collection("citas").add({
+        nombre: nombre,
+        correo: correo,
+        telefono: telefono,
+        fecha: fecha,
+        motivo: motivo,
+        timestamp: new Date()
+      })
+      .then(() => {
+        document.getElementById('mensajeExito').textContent = "Cita registrada con éxito.";
+        document.getElementById('mensajeError').textContent = "";
+        document.getElementById('citaForm').reset();
+      })
+      .catch((error) => {
+        console.error("Error al guardar la cita: ", error);
+        document.getElementById('mensajeError').textContent = "Hubo un error al registrar la cita.";
+        document.getElementById('mensajeExito').textContent = "";
+      });
+    });
+  </script>
+</body>
+</html>
